@@ -11,6 +11,9 @@
         "noUnusedVariables": "warn",
         "useExhaustiveDependencies": "off"
       },
+      "style": {
+        "useConst": "off"
+      },
       "suspicious": {
         "noConsoleLog": "warn"
       }
