@@ -4,6 +4,15 @@ migrate(
 		const dao = new Dao(db);
 		const collection = dao.findCollectionByNameOrId("ivhuftt0jir4rh5");
 
+		// remove
+		collection.schema.removeField("wd9sxopk");
+
+		return dao.saveCollection(collection);
+	},
+	(db) => {
+		const dao = new Dao(db);
+		const collection = dao.findCollectionByNameOrId("ivhuftt0jir4rh5");
+
 		// add
 		collection.schema.addField(
 			new SchemaField({
@@ -16,22 +25,13 @@ migrate(
 				unique: false,
 				options: {
 					collectionId: "0lwirk84n625bid",
-					cascadeDelete: false,
+					cascadeDelete: true,
 					minSelect: null,
 					maxSelect: null,
 					displayFields: null,
 				},
 			}),
 		);
-
-		return dao.saveCollection(collection);
-	},
-	(db) => {
-		const dao = new Dao(db);
-		const collection = dao.findCollectionByNameOrId("ivhuftt0jir4rh5");
-
-		// remove
-		collection.schema.removeField("wd9sxopk");
 
 		return dao.saveCollection(collection);
 	},

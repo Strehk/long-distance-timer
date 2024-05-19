@@ -2,23 +2,23 @@
 migrate(
 	(db) => {
 		const dao = new Dao(db);
-		const collection = dao.findCollectionByNameOrId("ivhuftt0jir4rh5");
+		const collection = dao.findCollectionByNameOrId("0lwirk84n625bid");
 
 		// add
 		collection.schema.addField(
 			new SchemaField({
 				system: false,
-				id: "wd9sxopk",
-				name: "messages",
+				id: "gshrwdnx",
+				name: "relationship",
 				type: "relation",
 				required: false,
 				presentable: false,
 				unique: false,
 				options: {
-					collectionId: "0lwirk84n625bid",
+					collectionId: "ivhuftt0jir4rh5",
 					cascadeDelete: false,
 					minSelect: null,
-					maxSelect: null,
+					maxSelect: 1,
 					displayFields: null,
 				},
 			}),
@@ -28,10 +28,10 @@ migrate(
 	},
 	(db) => {
 		const dao = new Dao(db);
-		const collection = dao.findCollectionByNameOrId("ivhuftt0jir4rh5");
+		const collection = dao.findCollectionByNameOrId("0lwirk84n625bid");
 
 		// remove
-		collection.schema.removeField("wd9sxopk");
+		collection.schema.removeField("gshrwdnx");
 
 		return dao.saveCollection(collection);
 	},

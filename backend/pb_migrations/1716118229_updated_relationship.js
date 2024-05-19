@@ -4,7 +4,7 @@ migrate(
 		const dao = new Dao(db);
 		const collection = dao.findCollectionByNameOrId("ivhuftt0jir4rh5");
 
-		collection.viewRule =
+		collection.updateRule =
 			"@request.auth.id = @collection.relationship.person_1 || @request.auth.id = @collection.relationship.person_2";
 
 		return dao.saveCollection(collection);
@@ -13,7 +13,7 @@ migrate(
 		const dao = new Dao(db);
 		const collection = dao.findCollectionByNameOrId("ivhuftt0jir4rh5");
 
-		collection.viewRule = null;
+		collection.updateRule = null;
 
 		return dao.saveCollection(collection);
 	},

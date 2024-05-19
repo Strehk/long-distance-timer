@@ -1,20 +1,20 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+import { onMount } from "svelte";
 
-  export let now = new Date();
-  export let end: Date;
+export let now = new Date();
+export let end: Date;
 
-  let timeLeft = end?.getTime() - now.getTime();
+let timeLeft = end?.getTime() - now.getTime();
 
-  onMount(() => {
-    const interval = setInterval(() => {
-      timeLeft = end?.getTime() - new Date().getTime();
-    }, 1000);
-  });
+onMount(() => {
+	const interval = setInterval(() => {
+		timeLeft = end?.getTime() - new Date().getTime();
+	}, 1000);
+});
 
-  $: days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-  $: hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  $: minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+$: days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+$: hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+$: minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 </script>
 
 <h2 class="text-xl">

@@ -1,30 +1,30 @@
 <script>
-  import PocketBase from "pocketbase";
-  import { writable } from "svelte/store";
+import PocketBase from "pocketbase";
+import { writable } from "svelte/store";
 
-  const pb = new PocketBase("http://127.0.0.1:8090");
+const pb = new PocketBase("http://127.0.0.1:8090");
 
-  let username = "";
-  let password = "";
-  let loginFailed = false;
+let username = "";
+let password = "";
+let loginFailed = false;
 
-  pb.authStore.onChange(() => {
-    if (pb.authStore.isValid) {
-      document.location.href = "/app";
-    }
-  });
+pb.authStore.onChange(() => {
+	if (pb.authStore.isValid) {
+		document.location.href = "/app";
+	}
+});
 
-  async function handleLogin() {
-    const authData = await pb
-      .collection("users")
-      .authWithPassword(username, password)
-      .catch((e) => {
-        loginFailed = true;
-        setTimeout(() => {
-          loginFailed = false;
-        }, 3000);
-      });
-  }
+async function handleLogin() {
+	const authData = await pb
+		.collection("users")
+		.authWithPassword(username, password)
+		.catch((e) => {
+			loginFailed = true;
+			setTimeout(() => {
+				loginFailed = false;
+			}, 3000);
+		});
+}
 </script>
 
 <main class="w-full h-screen flex justify-center items-center bg-black">
