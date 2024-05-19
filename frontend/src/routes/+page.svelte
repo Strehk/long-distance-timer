@@ -4,26 +4,26 @@ import { writable } from "svelte/store";
 
 const pb = new PocketBase("http://127.0.0.1:8090");
 
-let username = "";
-let password = "";
+const username = "";
+const password = "";
 let loginFailed = false;
 
 pb.authStore.onChange(() => {
-	if (pb.authStore.isValid) {
-		document.location.href = "/app";
-	}
+  if (pb.authStore.isValid) {
+    document.location.href = "/app";
+  }
 });
 
 async function handleLogin() {
-	const authData = await pb
-		.collection("users")
-		.authWithPassword(username, password)
-		.catch((e) => {
-			loginFailed = true;
-			setTimeout(() => {
-				loginFailed = false;
-			}, 3000);
-		});
+  const authData = await pb
+    .collection("users")
+    .authWithPassword(username, password)
+    .catch((e) => {
+      loginFailed = true;
+      setTimeout(() => {
+        loginFailed = false;
+      }, 3000);
+    });
 }
 </script>
 

@@ -9,20 +9,20 @@ export let tz: string;
 
 let now = new Date();
 
-$: getHours = parseInt(
-	now.toLocaleString("de-DE", {
-		timeZone: tz,
-		hour: "numeric",
-	}),
+$: getHours = Number.parseInt(
+  now.toLocaleString("de-DE", {
+    timeZone: tz,
+    hour: "numeric",
+  }),
 );
 
 $: get12Hours = getHours > 12 ? getHours - 12 : getHours;
 
-$: getMinutes = parseInt(
-	now.toLocaleString("de-DE", {
-		timeZone: tz,
-		minute: "numeric",
-	}),
+$: getMinutes = Number.parseInt(
+  now.toLocaleString("de-DE", {
+    timeZone: tz,
+    minute: "numeric",
+  }),
 );
 
 $: hourRotation = (get12Hours + getMinutes / 60) * 30;
@@ -31,12 +31,12 @@ $: minuteRotation = getMinutes * 6;
 $: night = getHours < 8 || getHours > 20;
 
 onMount(() => {
-	const interval = setInterval(() => {
-		now = new Date();
-	}, 1000);
-	return () => {
-		clearInterval(interval);
-	};
+  const interval = setInterval(() => {
+    now = new Date();
+  }, 1000);
+  return () => {
+    clearInterval(interval);
+  };
 });
 </script>
 

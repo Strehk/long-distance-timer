@@ -1,14 +1,14 @@
 <script lang="ts">
 import MessageModal from "./MessageModal.svelte";
 
-import SpeechBubbles from "./SpeechBubbles.svelte";
+import type { Relationship } from "$lib/backendTypes";
 import PocketBase from "pocketbase";
 import { onDestroy, onMount } from "svelte";
-import UntilTimer from "./untilTimer.svelte";
-import ProgressBar from "./progressBar.svelte";
-import BigTimer from "./bigTimer.svelte";
-import type { Relationship } from "$lib/backendTypes";
 import { writable } from "svelte/store";
+import SpeechBubbles from "./SpeechBubbles.svelte";
+import BigTimer from "./bigTimer.svelte";
+import ProgressBar from "./progressBar.svelte";
+import UntilTimer from "./untilTimer.svelte";
 
 const pb = new PocketBase("http://127.0.0.1:8090");
 
@@ -18,49 +18,48 @@ let data: Relationship | undefined = undefined;
 $: userId = writable("");
 
 const relationshipPoll = async () => {
-	const records = await pb
-		.collection("relationship")
-		.getFullList({
-			expand: "visits,messages",
-		})
-		.catch((e) => {
-			alert(e);
-		});
+  const records = await pb
+    .collection("relationship")
+    .getFullList({
+      expand: "visits,messages",
+    })
+    .catch((e) => {
+      alert(e);
+    });
 
-	if (records?.length && records.length > 0) {
-		console.log(records);
-		loadingPage = false;
-		data = records[0] as Relationship;
-	} else {
-		console.log("No records found");
-	}
+  if (records?.length && records.length > 0) {
+    loadingPage = false;
+    data = records[0] as Relationship;
+  } else {
+    console.error("No relationship found");
+  }
 };
 
 onMount(async () => {
-	await pb
-		.collection("users")
-		.authRefresh()
-		.then((data) => {
-			$userId = data.record.id;
-		})
-		.catch((e) => {
-			document.location.href = "/";
-		});
-	if (!pb.authStore.isValid) {
-		document.location.href = "/";
-	}
+  await pb
+    .collection("users")
+    .authRefresh()
+    .then((data) => {
+      $userId = data.record.id;
+    })
+    .catch((_e) => {
+      document.location.href = "/";
+    });
+  if (!pb.authStore.isValid) {
+    document.location.href = "/";
+  }
 
-	relationshipPoll();
-	const interval = setInterval(async () => relationshipPoll(), 10000);
+  relationshipPoll();
+  const interval = setInterval(async () => relationshipPoll(), 10000);
 
-	return () => {
-		clearInterval(interval);
-	};
+  return () => {
+    clearInterval(interval);
+  };
 });
 
 async function logout() {
-	await pb.authStore.clear();
-	document.location.href = "/";
+  await pb.authStore.clear();
+  document.location.href = "/";
 }
 </script>
 

@@ -1,7 +1,7 @@
 <script lang="ts">
+import type { Message, Relationship } from "$lib/backendTypes";
 import PocketBase from "pocketbase";
 import { onDestroy, onMount } from "svelte";
-import type { Message, Relationship } from "$lib/backendTypes";
 
 const pb = new PocketBase("http://127.0.0.1:8090");
 
@@ -14,31 +14,34 @@ $: messageTextareaValue = "";
 $: showErrorToast = "";
 $: sumLetters = messageTextareaValue.length;
 
-$: showErrorToast !== "" && setTimeout(() => (showErrorToast = ""), 5000);
+$: showErrorToast !== "" &&
+  setTimeout(() => {
+    showErrorToast = "";
+  }, 5000);
 
 async function sendMessage() {
-	if (
-		messageTextareaValue.length > 0 &&
-		messageTextareaValue.length <= MAX_MESSAGE_LENGHT
-	) {
-		await pb
-			.collection("message")
-			.create({
-				message: messageTextareaValue,
-				relationship: relationshipId,
-				user: userId,
-			})
-			.then(() => {
-				document.getElementById("message_modal").close();
-			})
-			.catch((e) => {
-				showErrorToast = "Fehler beim Senden der Nachricht";
-			});
-	} else if (messageTextareaValue.length > MAX_MESSAGE_LENGHT) {
-		showErrorToast = "Nachricht darf nicht länger als 1000 Zeichen sein";
-	} else {
-		showErrorToast = "Nachricht darf nicht leer sein";
-	}
+  if (
+    messageTextareaValue.length > 0 &&
+    messageTextareaValue.length <= MAX_MESSAGE_LENGHT
+  ) {
+    await pb
+      .collection("message")
+      .create({
+        message: messageTextareaValue,
+        relationship: relationshipId,
+        user: userId,
+      })
+      .then(() => {
+        document.getElementById("message_modal").close();
+      })
+      .catch((_e) => {
+        showErrorToast = "Fehler beim Senden der Nachricht";
+      });
+  } else if (messageTextareaValue.length > MAX_MESSAGE_LENGHT) {
+    showErrorToast = "Nachricht darf nicht länger als 1000 Zeichen sein";
+  } else {
+    showErrorToast = "Nachricht darf nicht leer sein";
+  }
 }
 </script>
 

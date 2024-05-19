@@ -5,47 +5,47 @@ import { ISODateToUnix } from "$lib";
 import type { Message } from "$lib/backendTypes";
 import PocketBase from "pocketbase";
 import { onMount } from "svelte";
-import { writable, type Writable } from "svelte/store";
+import { type Writable, writable } from "svelte/store";
 
 const pb = new PocketBase("http://127.0.0.1:8090");
 
-export let relationshipId: string = "";
-export let userIdPersonOne: string = "";
-export let userIdPersonTwo: string = "";
+export const relationshipId = "";
+export const userIdPersonOne = "";
+export const userIdPersonTwo = "";
 
-let messages: Writable<Message[]> = writable([]);
+const messages: Writable<Message[]> = writable([]);
 
 async function pollMessages() {
-	await pb
-		.collection("message")
-		.getFullList({
-			filter: `relationship="${relationshipId}"`,
-		})
-		.then((data) => {
-			console.log(data);
-			$messages = data as Message[];
-		})
-		.catch((e) => {
-			alert(e);
-		});
+  await pb
+    .collection("message")
+    .getFullList({
+      filter: `relationship="${relationshipId}"`,
+    })
+    .then((data) => {
+      $messages = data as Message[];
+    })
+    .catch((e) => {
+      alert(e);
+    });
 }
 
 onMount(() => {
-	pollMessages();
-	const interval = setInterval(async () => pollMessages(), 10000);
+  pollMessages();
+  const interval = setInterval(async () => pollMessages(), 10000);
+  return () => clearInterval(interval);
 });
 
 $: newestMessagePersonOne =
-	$messages
-		.filter((m) => m.user === userIdPersonOne)
-		.sort((a, b) => ISODateToUnix(b.created) - ISODateToUnix(a.created))[0]
-		?.message ?? "";
+  $messages
+    .filter((m) => m.user === userIdPersonOne)
+    .sort((a, b) => ISODateToUnix(b.created) - ISODateToUnix(a.created))[0]
+    ?.message ?? "";
 
 $: newestMessagePersonTwo =
-	$messages
-		.filter((m) => m.user === userIdPersonTwo)
-		.sort((a, b) => ISODateToUnix(b.created) - ISODateToUnix(a.created))[0]
-		?.message ?? "";
+  $messages
+    .filter((m) => m.user === userIdPersonTwo)
+    .sort((a, b) => ISODateToUnix(b.created) - ISODateToUnix(a.created))[0]
+    ?.message ?? "";
 </script>
 
 <div class="w-full flex justify-center items-center relative">

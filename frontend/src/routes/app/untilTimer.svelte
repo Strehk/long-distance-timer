@@ -1,15 +1,15 @@
 <script lang="ts">
 import { onMount } from "svelte";
 
-export let now = new Date();
+export const now = new Date();
 export let end: Date;
 
 let timeLeft = end?.getTime() - now.getTime();
 
 onMount(() => {
-	const interval = setInterval(() => {
-		timeLeft = end?.getTime() - new Date().getTime();
-	}, 1000);
+  const interval = setInterval(() => {
+    timeLeft = end?.getTime() - new Date().getTime();
+  }, 1000);
 });
 
 $: days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));

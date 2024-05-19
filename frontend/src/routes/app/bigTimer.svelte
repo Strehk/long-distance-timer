@@ -3,29 +3,30 @@ import { ISODateToUnix } from "$lib";
 import type { Visit } from "$lib/backendTypes";
 import { onMount } from "svelte";
 
-export let visits: Visit[] = [];
+export const visits: Visit[] = [];
 export let end: Date;
 
 $: nextVisit = visits.sort(
-	(a, b) => ISODateToUnix(a.date) - ISODateToUnix(b.date),
+  (a, b) => ISODateToUnix(a.date) - ISODateToUnix(b.date),
 )[0];
 
 const calculateTimeLeft = () =>
-	visits.length === 0 || !nextVisit
-		? end?.getTime() - new Date().getTime()
-		: ISODateToUnix(nextVisit.date) - new Date().getTime();
+  visits.length === 0 || !nextVisit
+    ? end?.getTime() - new Date().getTime()
+    : ISODateToUnix(nextVisit.date) - new Date().getTime();
 
 $: timeLeft = calculateTimeLeft();
 
 onMount(() => {
-	const interval = setInterval(() => {
-		timeLeft = calculateTimeLeft();
-	}, 1000);
+  const interval = setInterval(() => {
+    timeLeft = calculateTimeLeft();
+  }, 1000);
+  return () => clearInterval(interval);
 });
 
 $: months = Math.floor(timeLeft / (1000 * 60 * 60 * 24 * 30));
 $: days = Math.floor(
-	(timeLeft % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24),
+  (timeLeft % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24),
 );
 $: hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 $: minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));

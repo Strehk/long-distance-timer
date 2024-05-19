@@ -1,15 +1,15 @@
 {
-	"scripts": {
-		"dev": "npm-run-all --parallel dev:**",
-		"dev:frontend": "cd frontend && npm run dev",
-		"dev:backend": "cd backend && ./pocketbase serve",
-		"format": "biome format . --write",
-		"lint": "biome check . --apply",
-		"lint:error-only": "biome check . --apply --diagnostic-level=error"
-	},
-	"workspaces": ["frontend"],
-	"devDependencies": {
-		"@biomejs/biome": "^1.6.3",
-		"npm-run-all": "^4.1.5"
-	}
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:**",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && ./pocketbase serve",
+    "format": "biome format . --write",
+    "lint": "biome check . --apply",
+    "lint:error-only": "biome check . --apply --diagnostic-level=error"
+  },
+  "workspaces": ["frontend"],
+  "devDependencies": {
+    "@biomejs/biome": "^1.6.3",
+    "npm-run-all": "^4.1.5"
+  }
 }
