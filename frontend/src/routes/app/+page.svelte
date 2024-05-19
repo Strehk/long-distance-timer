@@ -1,66 +1,66 @@
 <script lang="ts">
-import MessageModal from "./MessageModal.svelte";
+  import MessageModal from "./MessageModal.svelte";
 
-import type { Relationship } from "$lib/backendTypes";
-import PocketBase from "pocketbase";
-import { onDestroy, onMount } from "svelte";
-import { writable } from "svelte/store";
-import SpeechBubbles from "./SpeechBubbles.svelte";
-import BigTimer from "./bigTimer.svelte";
-import ProgressBar from "./progressBar.svelte";
-import UntilTimer from "./untilTimer.svelte";
+  import type { Relationship } from "$lib/backendTypes";
+  import PocketBase from "pocketbase";
+  import { onDestroy, onMount } from "svelte";
+  import { writable } from "svelte/store";
+  import SpeechBubbles from "./SpeechBubbles.svelte";
+  import BigTimer from "./bigTimer.svelte";
+  import ProgressBar from "./progressBar.svelte";
+  import UntilTimer from "./untilTimer.svelte";
 
-const pb = new PocketBase("http://127.0.0.1:8090");
+  const pb = new PocketBase("http://127.0.0.1:8090");
 
-let loadingPage = true;
-let data: Relationship | undefined = undefined;
+  let loadingPage = true;
+  let data: Relationship | undefined = undefined;
 
-$: userId = writable("");
+  $: userId = writable("");
 
-const relationshipPoll = async () => {
-  const records = await pb
-    .collection("relationship")
-    .getFullList({
-      expand: "visits,messages",
-    })
-    .catch((e) => {
-      alert(e);
-    });
+  const relationshipPoll = async () => {
+    const records = await pb
+      .collection("relationship")
+      .getFullList({
+        expand: "visits,messages",
+      })
+      .catch((e) => {
+        alert(e);
+      });
 
-  if (records?.length && records.length > 0) {
-    loadingPage = false;
-    data = records[0] as Relationship;
-  } else {
-    console.error("No relationship found");
-  }
-};
+    if (records?.length && records.length > 0) {
+      loadingPage = false;
+      data = records[0] as Relationship;
+    } else {
+      console.error("No relationship found");
+    }
+  };
 
-onMount(async () => {
-  await pb
-    .collection("users")
-    .authRefresh()
-    .then((data) => {
-      $userId = data.record.id;
-    })
-    .catch((_e) => {
+  onMount(async () => {
+    await pb
+      .collection("users")
+      .authRefresh()
+      .then((data) => {
+        $userId = data.record.id;
+      })
+      .catch((_e) => {
+        document.location.href = "/";
+      });
+    if (!pb.authStore.isValid) {
       document.location.href = "/";
-    });
-  if (!pb.authStore.isValid) {
+    }
+
+    relationshipPoll();
+    const interval = setInterval(async () => relationshipPoll(), 10000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  });
+
+  async function logout() {
+    await pb.authStore.clear();
     document.location.href = "/";
   }
-
-  relationshipPoll();
-  const interval = setInterval(async () => relationshipPoll(), 10000);
-
-  return () => {
-    clearInterval(interval);
-  };
-});
-
-async function logout() {
-  await pb.authStore.clear();
-  document.location.href = "/";
-}
 </script>
 
 {#if loadingPage}
@@ -68,7 +68,9 @@ async function logout() {
     <span class="loading loading-spinner loading-lg"></span>
   </div>
 {:else}
-  <div class="w-full h-screen flex justify-center items-start relative overflow-hidden">
+  <div
+    class="w-full h-screen flex justify-center items-start relative overflow-hidden"
+  >
     <SpeechBubbles
       relationshipId={data?.id ?? ""}
       userIdPersonOne={data?.person_1}

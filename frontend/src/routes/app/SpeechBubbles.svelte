@@ -9,9 +9,9 @@ import { type Writable, writable } from "svelte/store";
 
 const pb = new PocketBase("http://127.0.0.1:8090");
 
-export const relationshipId = "";
-export const userIdPersonOne = "";
-export const userIdPersonTwo = "";
+export let relationshipId = "";
+export let userIdPersonOne = "";
+export let userIdPersonTwo = "";
 
 const messages: Writable<Message[]> = writable([]);
 
