@@ -4,9 +4,12 @@ FROM node:22-alpine as build-stage
 # Set the working directory
 WORKDIR /app
 
+# Set the Version Environment Variable for the frontend
+ARG PUBLIC_VERSION=${PUBLIC_VERSION}
+
 # Copy package files and install dependencies
 COPY frontend/package*.json ./frontend/
-RUN cd frontend && npm install
+RUN cd frontend && npm install --frozen-lockfile
 
 # Copy the frontend app source code
 COPY frontend/ ./frontend/
@@ -26,7 +29,7 @@ COPY --from=build-stage /app/frontend/build ./public
 
 # Copy package files and install runtime dependencies only
 COPY package*.json ./
-RUN npm install --production
+RUN npm install --production --frozen-lockfile
 
 # Copy the backend source code
 COPY . .
