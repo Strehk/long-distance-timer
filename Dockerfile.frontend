@@ -8,6 +8,8 @@ WORKDIR /app
 ARG PUBLIC_VERSION=${PUBLIC_VERSION}
 
 # Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install --frozen-lockfile
 COPY frontend/package*.json ./frontend/
 RUN cd frontend && npm install --frozen-lockfile
 
@@ -29,8 +31,8 @@ COPY --from=build-stage /app/frontend/build ./public
 
 # Copy the app source code
 COPY . .
-RUN npm install --production --frozen-lockfile
-RUN cd frontend && npm install --production --frozen-lockfile
+RUN npm install --omit=dev --frozen-lockfile
+RUN cd frontend && npm install --omit=dev --frozen-lockfile
 
 
 # Expose the port that the app will run on
