@@ -30,13 +30,16 @@ WORKDIR /app
 COPY --from=build-stage /app/frontend/build ./frontend/build
 
 # Copy the app source code
-COPY . .
+COPY package*.json ./
 RUN npm install --omit=dev --frozen-lockfile
+COPY frontend/package*.json ./frontend/
 RUN cd frontend && npm install --omit=dev --frozen-lockfile
+
+COPY frontend/static ./frontend/static
 
 
 # Expose the port that the app will run on
 EXPOSE 3000
 
 # Set the command to run the app when the container starts
-CMD ["node", "build/index.js"]
+CMD ["node", "frontend/build/index.js"]
