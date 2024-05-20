@@ -15,7 +15,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: tadesf/long-distance-timer
+          images: tadesf/long-distance-timer-frontend
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -44,7 +44,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: tadesf/long-distance-timer
+          images: tadesf/long-distance-timer-backend
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
