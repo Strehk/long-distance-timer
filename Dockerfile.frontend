@@ -27,7 +27,7 @@ FROM node:22-alpine
 WORKDIR /app
 
 # Copy built files from the build-stage
-COPY --from=build-stage /app/frontend/build ./public
+COPY --from=build-stage /app/frontend/build ./frontend/build
 
 # Copy the app source code
 COPY . .
@@ -39,4 +39,4 @@ RUN cd frontend && npm install --omit=dev --frozen-lockfile
 EXPOSE 3000
 
 # Set the command to run the app when the container starts
-CMD ["node", "public/index.js"]
+CMD ["node", "build/index.js"]
