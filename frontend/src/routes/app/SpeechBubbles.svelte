@@ -73,9 +73,7 @@ $: newestMessagePersonTwo =
       <div
         class="chat-bubble bg-[#aaaaff] text-blue-900 bg-opacity-50 backdrop-blur-md before:bg-opacity-100 before:backdrop-blur-md !max-w-[40%] !min-h-fit max-h-[7.3rem] text-sm xl:text-base"
       >
-        <div class="p-1">
-          {newestMessagePersonTwo}
-        </div>
+        {newestMessagePersonTwo}
       </div>
     </div>
   {/if}
