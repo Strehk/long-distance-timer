@@ -146,13 +146,3 @@ async function logout() {
 </div>
 
 <MessageModal userId={$userId} relationshipId={$data?.id ?? ""} />
-
-<style>
-  #banner {
-    background: linear-gradient(
-      to bottom,
-      rgba(183, 180, 204, 0),
-      rgb(222, 222, 222) 30%
-    );
-  }
-</style>
