@@ -1,13 +1,13 @@
 <script lang="ts">
 import Clock from "./Clock.svelte";
-
 import { ISODateToUnix } from "$lib";
 import type { Message } from "$lib/backendTypes";
 import PocketBase from "pocketbase";
 import { onMount } from "svelte";
 import { type Writable, writable } from "svelte/store";
+import { env } from "$env/dynamic/public";
 
-const pb = new PocketBase("http://127.0.0.1:8090");
+const pb = new PocketBase(env.PUBLIC_BACKEND_URL || "http://localhost:8090");
 
 export let relationshipId = "";
 export let userIdPersonOne = "";
@@ -15,11 +15,11 @@ export let userIdPersonTwo = "";
 
 const messages: Writable<Message[]> = writable([]);
 
-async function pollMessages() {
+async function pollMessages(relId: string) {
   await pb
     .collection("message")
     .getFullList({
-      filter: `relationship="${relationshipId}"`,
+      filter: `relationship="${relId}"`,
     })
     .then((data) => {
       $messages = data as Message[];
@@ -28,10 +28,10 @@ async function pollMessages() {
       alert(e);
     });
 }
+$: pollMessages(relationshipId);
 
 onMount(() => {
-  pollMessages();
-  const interval = setInterval(async () => pollMessages(), 10000);
+  const interval = setInterval(async () => pollMessages(relationshipId), 10000);
   return () => clearInterval(interval);
 });
 
@@ -48,14 +48,14 @@ $: newestMessagePersonTwo =
     ?.message ?? "";
 </script>
 
-<div class="w-full flex justify-center items-center relative">
+<div class="w-full flex justify-center items-center relative min-w-[1200px]">
   <slot />
   {#if newestMessagePersonOne}
     <div
       class="chat chat-start w-full absolute person-one-position -translate-y-full"
     >
       <div
-        class="chat-bubble bg-[#ffc079] text-orange-900 shadow-md !max-w-[25%] max-h-[10rem]"
+        class="chat-bubble bg-[#ffcd94] backdrop-blur-md bg-opacity-50 text-orange-900 !max-w-[25%] !min-h-fit max-h-[10rem] text-sm xl:text-base"
       >
         {newestMessagePersonOne}
       </div>
@@ -71,7 +71,7 @@ $: newestMessagePersonTwo =
       class="chat chat-start w-full absolute person-two-position -translate-y-full"
     >
       <div
-        class="chat-bubble bg-[#aaaaff] text-blue-900 shadow-md !max-w-[40%] max-h-[7.3rem]"
+        class="chat-bubble bg-[#aaaaff] text-blue-900 bg-opacity-50 backdrop-blur-md before:bg-opacity-100 before:backdrop-blur-md !max-w-[40%] !min-h-fit max-h-[7.3rem] text-sm xl:text-base"
       >
         <div class="p-1">
           {newestMessagePersonTwo}

@@ -2,8 +2,9 @@
 import type { Message, Relationship } from "$lib/backendTypes";
 import PocketBase from "pocketbase";
 import { onDestroy, onMount } from "svelte";
+import { env } from "$env/dynamic/public";
 
-const pb = new PocketBase("http://127.0.0.1:8090");
+const pb = new PocketBase(env.PUBLIC_BACKEND_URL || "http://localhost:8090");
 
 export let userId: string;
 export let relationshipId: string;
@@ -45,12 +46,12 @@ async function sendMessage() {
 }
 </script>
 
-<dialog id="message_modal" class="modal backdrop-blur-sm">
-  <div class="modal-box flex flex-col gap-4">
+<dialog id="message_modal" class="modal">
+  <div class="modal-box backdrop-blur-sm bg-white bg-opacity-50 flex flex-col gap-4">
     <h2 class="text-2xl">Sende eine Nachricht</h2>
     <div class="form-control">
       <textarea
-        class="textarea textarea-bordered"
+        class="textarea bg-white bg-opacity-50 backdrop-blur-md shadow-md"
         placeholder="Nachricht..."
         bind:value={messageTextareaValue}
       />
@@ -61,11 +62,11 @@ async function sendMessage() {
       </div>
       <div class="flex gap-2 w-full">
         <button
-          class="btn btn-warning"
+          class="btn btn-warning shadow-md"
           on:click={() => document.getElementById("message_modal").close()}
           >Abbrechen</button
         >
-        <button class="btn btn-primary flex-1" on:click={() => sendMessage()}
+        <button class="btn btn-primary flex-1 shadow-md" on:click={() => sendMessage()}
           >Senden</button
         >
       </div>

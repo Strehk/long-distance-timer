@@ -1,107 +1,120 @@
 <script lang="ts">
-  import MessageModal from "./MessageModal.svelte";
+import MessageModal from "./MessageModal.svelte";
+import { env } from "$env/dynamic/public";
+import type { Relationship } from "$lib/backendTypes";
+import PocketBase from "pocketbase";
+import { onDestroy, onMount } from "svelte";
+import { writable, type Writable } from "svelte/store";
+import SpeechBubbles from "./SpeechBubbles.svelte";
+import BigTimer from "./bigTimer.svelte";
+import ProgressBar from "./progressBar.svelte";
+import UntilTimer from "./untilTimer.svelte";
+import { fade } from "svelte/transition";
 
-  import type { Relationship } from "$lib/backendTypes";
-  import PocketBase from "pocketbase";
-  import { onDestroy, onMount } from "svelte";
-  import { writable } from "svelte/store";
-  import SpeechBubbles from "./SpeechBubbles.svelte";
-  import BigTimer from "./bigTimer.svelte";
-  import ProgressBar from "./progressBar.svelte";
-  import UntilTimer from "./untilTimer.svelte";
+const pb = new PocketBase(env.PUBLIC_BACKEND_URL || "http://localhost:8090");
 
-  const pb = new PocketBase("http://127.0.0.1:8090");
+let loadingPage = writable(true);
+let data: Writable<Relationship> = writable({} as Relationship);
 
-  let loadingPage = true;
-  let data: Relationship | undefined = undefined;
+$: userId = writable("");
 
-  $: userId = writable("");
+const relationshipPoll = async () => {
+  const records = await pb
+    .collection("relationship")
+    .getFullList({
+      expand: "visits",
+    })
+    .catch((e) => {
+      alert(e);
+    });
 
-  const relationshipPoll = async () => {
-    const records = await pb
-      .collection("relationship")
-      .getFullList({
-        expand: "visits,messages",
-      })
-      .catch((e) => {
-        alert(e);
-      });
+  if (records?.length && records.length > 0) {
+    data.set(records[0] as Relationship);
+  } else {
+    console.error("No relationship found");
+  }
+};
 
-    if (records?.length && records.length > 0) {
-      loadingPage = false;
-      data = records[0] as Relationship;
-    } else {
-      console.error("No relationship found");
-    }
-  };
+let interval: any;
 
-  onMount(async () => {
-    await pb
-      .collection("users")
-      .authRefresh()
-      .then((data) => {
-        $userId = data.record.id;
-      })
-      .catch((_e) => {
-        document.location.href = "/";
-      });
-    if (!pb.authStore.isValid) {
+onMount(async () => {
+  await pb
+    .collection("users")
+    .authRefresh()
+    .then((authData) => {
+      $userId = authData.record.id;
+    })
+    .catch((_e) => {
       document.location.href = "/";
-    }
-
-    relationshipPoll();
-    const interval = setInterval(async () => relationshipPoll(), 10000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  });
-
-  async function logout() {
-    await pb.authStore.clear();
+    });
+  if (!pb.authStore.isValid) {
     document.location.href = "/";
   }
+
+  relationshipPoll();
+  setTimeout(() => loadingPage.set(false), 1000);
+  interval = setInterval(async () => relationshipPoll(), 10000);
+});
+
+onDestroy(() => {
+  clearInterval(interval);
+});
+
+async function logout() {
+  await pb.authStore.clear();
+  document.location.href = "/";
+}
 </script>
 
-{#if loadingPage}
-  <div class="w-full h-screen flex justify-center items-center">
-    <span class="loading loading-spinner loading-lg"></span>
-  </div>
-{:else}
+{#if $loadingPage}
   <div
-    class="w-full h-screen flex justify-center items-start relative overflow-hidden"
+    class={`absolute inset-0 flex justify-center items-center bg-white z-50`}
+    transition:fade={{ delay: 250, duration: 1000 }}
   >
-    <SpeechBubbles
-      relationshipId={data?.id ?? ""}
-      userIdPersonOne={data?.person_1}
-      userIdPersonTwo={data?.person_2}
-    >
-      <img
-        src="/map.jpeg"
-        alt="map"
-        class="w-full h-full contrast-75 saturate-75 brightness-125 hidden xl:block"
-      />
-    </SpeechBubbles>
-    <div
-      id="banner"
-      class="bg-[#999999] w-full h-1/2 absolute bottom-0 right-0 flex flex-col justify-end items-center p-10"
-    >
-      <BigTimer
-        visits={data?.expand?.visits ?? []}
-        end={data?.end ? new Date(data.end) : new Date()}
-      />
-      <UntilTimer end={data?.end ? new Date(data.end) : new Date()} />
-      <ProgressBar
-        end={data?.end ? new Date(data.end) : new Date()}
-        start={data?.start ? new Date(data.start) : new Date()}
-      />
-    </div>
+    <div class="loading loading-ball loading-lg" />
   </div>
 {/if}
 
+<div
+  class="w-screen h-screen flex justify-center items-start relative overflow-hidden"
+>
+  <SpeechBubbles
+    relationshipId={$data?.id ?? ""}
+    userIdPersonOne={$data?.person_1}
+    userIdPersonTwo={$data?.person_2}
+  >
+  <div class="w-full h-full hidden lg:block relative">
+    <img
+      src="/map.jpeg"
+      alt="map"
+      class="w-full h-full contrast-75 saturate-75 brightness-125"
+    />
+    <img
+      src="/map.jpeg"
+      alt="map"
+      class="absolute w-full h-full contrast-75 saturate-75 brightness-125 bottom-0 translate-y-full rotate-180 -scale-x-100"
+    />
+  </div>
+  </SpeechBubbles>
+  <div
+    id="banner1"
+    class="w-full h-full backdrop-blur-2xl bg-white bg-opacity-30 lg:h-[45%] lg:min-h-[300px] absolute bottom-0 right-0 flex flex-col justify-center items-center p-10"
+  >
+    <BigTimer
+      visits={$data?.expand?.visits ?? []}
+      end={$data?.end ? new Date($data.end) : new Date()}
+    />
+    <UntilTimer end={$data?.end ? new Date($data.end) : new Date()} />
+    <ProgressBar
+      end={$data?.end ? new Date($data.end) : new Date()}
+      start={$data?.start ? new Date($data.start) : new Date()}
+    />
+  </div>
+</div>
+
 <div class="absolute top-2 right-2 flex gap-2 p-2">
   <button
-    class="btn btn-md btn-circle btn-ghost shadow-md"
+    class="btn btn-md btn-circle btn-ghost backdrop-blur-md shadow-md"
     on:click={() =>
       document?.getElementById("message_modal") &&
       document.getElementById("message_modal").showModal()}
@@ -117,7 +130,7 @@
     >
   </button>
   <button
-    class="btn btn-md btn-circle btn-ghost shadow-md"
+    class="btn btn-md btn-circle btn-ghost backdrop-blur-sm shadow-md"
     on:click={() => logout()}
   >
     <svg
@@ -132,7 +145,7 @@
   </button>
 </div>
 
-<MessageModal userId={$userId} relationshipId={data?.id ?? ""} />
+<MessageModal userId={$userId} relationshipId={$data?.id ?? ""} />
 
 <style>
   #banner {

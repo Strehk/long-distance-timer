@@ -8,7 +8,7 @@ export let end: Date;
 $: progress = (
   ((now.getTime() - start.getTime()) / (end.getTime() - start.getTime())) *
   100
-).toFixed(2);
+)
 
 onMount(() => {
   const interval = setInterval(() => {
@@ -19,6 +19,6 @@ onMount(() => {
 </script>
 
 <div class="w-1/2 font-mono text-center">
-  <progress class="progress w-full" value={progress} max="100"
-  ></progress>{progress}%
+  <progress class="progress w-full" value={!isNaN(progress) ? progress : 0} max="100"
+  ></progress>{progress.toFixed(2)}%
 </div>

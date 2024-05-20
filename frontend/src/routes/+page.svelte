@@ -1,30 +1,31 @@
 <script>
-import PocketBase from "pocketbase";
-import { writable } from "svelte/store";
+  import PocketBase from "pocketbase";
+  import { env } from "$env/dynamic/public";
+  import { PUBLIC_VERSION } from "$env/static/public";
 
-const pb = new PocketBase("http://127.0.0.1:8090");
+  const pb = new PocketBase(env.PUBLIC_BACKEND_URL || "http://localhost:8090");
 
-const username = "";
-const password = "";
-let loginFailed = false;
+  let username = "";
+  let password = "";
+  let loginFailed = false;
 
-pb.authStore.onChange(() => {
-  if (pb.authStore.isValid) {
-    document.location.href = "/app";
+  pb.authStore.onChange(() => {
+    if (pb.authStore.isValid) {
+      document.location.href = "/app";
+    }
+  });
+
+  async function handleLogin() {
+    const authData = await pb
+      .collection("users")
+      .authWithPassword(username, password)
+      .catch((e) => {
+        loginFailed = true;
+        setTimeout(() => {
+          loginFailed = false;
+        }, 3000);
+      });
   }
-});
-
-async function handleLogin() {
-  const authData = await pb
-    .collection("users")
-    .authWithPassword(username, password)
-    .catch((e) => {
-      loginFailed = true;
-      setTimeout(() => {
-        loginFailed = false;
-      }, 3000);
-    });
-}
 </script>
 
 <main class="w-full h-screen flex justify-center items-center bg-black">
@@ -33,11 +34,11 @@ async function handleLogin() {
     alt="map"
     class="absolute object-cover w-full h-full blur-sm"
   />
-  <div class="card w-96 bg-base-100 shadow-xl">
+  <div class="card w-96 backdrop-blur-md shadow-md bg-white bg-opacity-20">
     <form class="card-body" on:submit={() => handleLogin()}>
       <h2 class="card-title">Anmelden</h2>
       <label
-        class={`input input-bordered flex items-center gap-2 ${loginFailed ? "input-error" : ""} transition-all`}
+        class={`input shadow-md bg-black bg-opacity-40 text-white flex items-center gap-2 ${loginFailed ? "input-error" : ""} transition-all`}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +58,7 @@ async function handleLogin() {
         />
       </label>
       <label
-        class={`input input-bordered flex items-center gap-2 ${loginFailed ? "input-error" : ""} transition-all`}
+        class={`input shadow-md bg-black bg-opacity-40 text-white flex items-center gap-2 ${loginFailed ? "input-error" : ""} transition-all`}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -79,11 +80,15 @@ async function handleLogin() {
         />
       </label>
       <div class="card-actions justify-stretch">
-        <button class="btn btn-primary w-full" type="submit">Login</button>
+        <button class="btn bg-transparent border-0 w-full backdrop-blur-md shadow-md" type="submit">Login</button>
       </div>
     </form>
   </div>
 </main>
+
+<div class="absolute bottom-2 right-2">
+  <span class="text-xs text-gray-500">{PUBLIC_VERSION}</span>
+</div>
 
 {#if loginFailed}
   <div class="toast toast-top toast-end">
