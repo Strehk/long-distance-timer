@@ -27,12 +27,11 @@ WORKDIR /app
 # Copy built files from the build-stage
 COPY --from=build-stage /app/frontend/build ./public
 
-# Copy package files and install runtime dependencies only
-COPY package*.json ./
-RUN npm install --production --frozen-lockfile
-
-# Copy the backend source code
+# Copy the app source code
 COPY . .
+RUN npm install --production --frozen-lockfile
+RUN cd frontend && npm install --production --frozen-lockfile
+
 
 # Expose the port that the app will run on
 EXPOSE 3000
