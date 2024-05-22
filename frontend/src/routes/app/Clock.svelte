@@ -1,8 +1,4 @@
 <script lang="ts">
-import { updated } from "$app/stores";
-import { ISODateToUnix } from "$lib";
-import type { Message } from "$lib/backendTypes";
-import PocketBase from "pocketbase";
 import { onMount } from "svelte";
 
 export let tz: string;
@@ -40,7 +36,8 @@ onMount(() => {
 });
 </script>
 
-<div id="clock" class={night ? "bg-black" : "bg-white"}>
+<div id="clock" class={`relative ${night ? "bg-black" : "bg-white"}`}>
+  <img src="/clockface.svg" alt="clockface" class={`absolute w-[95%] h-[95%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${night ? "invert" : "invert-0"}`} />
   <div
     id="hour"
     style="transform: translate(-50%, -100%) rotate({hourRotation}deg)"
