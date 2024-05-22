@@ -62,11 +62,11 @@ async function sendMessage() {
       </div>
       <div class="flex gap-2 w-full">
         <button
-          class="btn btn-warning shadow-md"
+          class="btn btn-base-100 shadow-md"
           on:click={() => document.getElementById("message_modal").close()}
           >Abbrechen</button
         >
-        <button class="btn btn-primary flex-1 shadow-md" on:click={() => sendMessage()}
+        <button class="btn btn-info flex-1 shadow-md" on:click={() => sendMessage()}
           >Senden</button
         >
       </div>
