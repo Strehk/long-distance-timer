@@ -24,10 +24,7 @@ onMount(() => {
   return () => clearInterval(interval);
 });
 
-$: months = Math.floor(timeLeft / (1000 * 60 * 60 * 24 * 30));
-$: days = Math.floor(
-  (timeLeft % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24),
-);
+$: days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
 $: hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 $: minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 $: seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
@@ -42,20 +39,17 @@ $: seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 </h2>
 <h1 class="font-mono text-center mb-10">
   <div class="grid grid-flow-col gap-5 text-center auto-cols-max">
-    {#if months > 0}
-      <div class="flex flex-col">
-        <span class="countdown font-mono text-7xl">
-          <span style="--value:{months};"></span>
-        </span>
-        Monate
-      </div>
-      <div class="text-7xl">–</div>
-    {/if}
     {#if days > 0}
       <div class="flex flex-col">
+        {#if days <= 99}
         <span class="countdown font-mono text-7xl">
           <span style="--value:{days};"></span>
         </span>
+        {:else}
+        <span class="font-mono text-7xl inline-flex leading-[1em]">
+          {days}
+        </span>
+        {/if}
         Tage
       </div>
       <div class="text-7xl">|</div>
