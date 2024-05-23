@@ -24,10 +24,7 @@ onMount(() => {
   return () => clearInterval(interval);
 });
 
-$: months = Math.floor(timeLeft / (1000 * 60 * 60 * 24 * 30));
-$: days = Math.floor(
-  (timeLeft % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24),
-);
+$: days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
 $: hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 $: minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 $: seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
@@ -41,40 +38,37 @@ $: seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
   {/if}
 </h2>
 <h1 class="font-mono text-center mb-10">
-  <div class="grid grid-flow-col gap-5 text-center auto-cols-max">
-    {#if months > 0}
-      <div class="flex flex-col">
-        <span class="countdown font-mono text-7xl">
-          <span style="--value:{months};"></span>
-        </span>
-        Monate
-      </div>
-      <div class="text-7xl">–</div>
-    {/if}
+  <div class="grid grid-flow-col gap-2 text-center auto-cols-max">
     {#if days > 0}
-      <div class="flex flex-col">
+      <div class="flex flex-col backdrop-blur-md shadow-md rounded-box p-4">
+        {#if days <= 99}
         <span class="countdown font-mono text-7xl">
           <span style="--value:{days};"></span>
         </span>
+        {:else}
+        <span class="font-mono text-7xl inline-flex leading-[1em]">
+          {days}
+        </span>
+        {/if}
         Tage
       </div>
-      <div class="text-7xl">|</div>
+      <div class="text-7xl"></div>
     {/if}
-    <div class="flex flex-col">
+    <div class="flex flex-col backdrop-blur-md shadow-md rounded-box p-4">
       <span class="countdown font-mono text-7xl">
         <span style="--value:{hours};"></span>
       </span>
       Stunden
     </div>
-    <div class="text-7xl">:</div>
-    <div class="flex flex-col">
+    <div class="text-7xl"></div>
+    <div class="flex flex-col backdrop-blur-md shadow-md rounded-box p-4">
       <span class="countdown font-mono text-7xl">
         <span style="--value:{minutes};"></span>
       </span>
       Minuten
     </div>
-    <div class="text-7xl">:</div>
-    <div class="flex flex-col">
+    <div class="text-7xl"></div>
+    <div class="flex flex-col backdrop-blur-md shadow-md rounded-box p-4">
       <span class="countdown font-mono text-7xl">
         <span style="--value:{seconds};"></span>
       </span>
