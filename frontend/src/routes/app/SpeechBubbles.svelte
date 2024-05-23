@@ -55,7 +55,7 @@ $: newestMessagePersonTwo =
       class="chat chat-start w-full absolute person-one-position -translate-y-full"
     >
       <div
-        class="chat-bubble bg-[#ffcd94] backdrop-blur-md bg-opacity-50 text-orange-900 !max-w-[25%] !min-h-fit max-h-[10rem] text-sm xl:text-base"
+        class="chat-bubble bg-primary text-orange-900 backdrop-blur-md bg-opacity-50 !max-w-[25%] !min-h-fit max-h-[10rem] text-sm xl:text-base"
       >
         {newestMessagePersonOne}
       </div>
@@ -71,7 +71,7 @@ $: newestMessagePersonTwo =
       class="chat chat-start w-full absolute person-two-position -translate-y-full"
     >
       <div
-        class="chat-bubble bg-[#aaaaff] text-blue-900 bg-opacity-50 backdrop-blur-md before:bg-opacity-100 before:backdrop-blur-md !max-w-[40%] !min-h-fit max-h-[7.3rem] text-sm xl:text-base"
+        class="chat-bubble bg-secondary text-blue-900 backdrop-blur-md bg-opacity-50 !max-w-[40%] !min-h-fit max-h-[7.3rem] text-sm xl:text-base"
       >
         {newestMessagePersonTwo}
       </div>
