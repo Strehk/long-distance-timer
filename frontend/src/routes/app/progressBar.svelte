@@ -18,7 +18,7 @@ onMount(() => {
 });
 </script>
 
-<div class="w-1/2 font-mono text-center">
+<div class="w-1/2 font-mono text-center text-sm md:text-md mt-2">
   <progress class="progress w-full" value={!isNaN(progress) ? progress : 0} max="100"
   ></progress>{progress.toFixed(2)}%
 </div>

@@ -16,10 +16,10 @@
   });
 
   async function handleLogin() {
-    const authData = await pb
+    const _authData = await pb
       .collection("users")
       .authWithPassword(username, password)
-      .catch((e) => {
+      .catch((_e) => {
         loginFailed = true;
         setTimeout(() => {
           loginFailed = false;
@@ -34,7 +34,7 @@
     alt="map"
     class="absolute object-cover w-full h-full blur-sm"
   />
-  <div class="card w-96 backdrop-blur-md shadow-md bg-white bg-opacity-20">
+  <div class="card w-full md:w-96 m-4 backdrop-blur-md shadow-md bg-white bg-opacity-20">
     <form class="card-body" on:submit={() => handleLogin()}>
       <h2 class="card-title">Anmelden</h2>
       <label
