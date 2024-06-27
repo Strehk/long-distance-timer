@@ -8,10 +8,15 @@ import { writable, type Writable } from "svelte/store";
 import SpeechBubbles from "./SpeechBubbles.svelte";
 import BigTimer from "./bigTimer.svelte";
 import ProgressBar from "./progressBar.svelte";
+import Clock from "./Clock.svelte";
 import UntilTimer from "./untilTimer.svelte";
 import { fade } from "svelte/transition";
+import SpeechBubblesSmallScreen from "./SpeechBubblesSmallScreen.svelte";
+import { width } from '$lib/stores.js';
 
 const pb = new PocketBase(env.PUBLIC_BACKEND_URL || "http://localhost:8090");
+
+const BREAKPOINT = 1024;
 
 let loadingPage = writable(true);
 let data: Writable<Relationship> = writable({} as Relationship);
@@ -75,6 +80,9 @@ async function logout() {
   </div>
 {/if}
 
+
+<!-- Desktop -->
+{#if $width > BREAKPOINT}
 <div
   class="w-screen h-screen flex justify-center items-start relative overflow-hidden"
 >
@@ -111,8 +119,40 @@ async function logout() {
     />
   </div>
 </div>
+{/if}
 
-<div class="absolute top-2 right-2 flex gap-2 p-2">
+<!-- Mobile -->
+{#if $width <= BREAKPOINT}
+<div class="w-full min-h-screen p-10 flex flex-col justify-center items-center bg-slate-100">
+  <div class="h-10" />
+  <BigTimer
+  visits={$data?.expand?.visits ?? []}
+  end={$data?.end ? new Date($data.end) : new Date()}
+  />
+  <UntilTimer end={$data?.end ? new Date($data.end) : new Date()} />
+  <ProgressBar
+  end={$data?.end ? new Date($data.end) : new Date()}
+  start={$data?.start ? new Date($data.start) : new Date()}
+  />
+  <div class="flex justify-between w-full my-10">
+    <div class="w-24 h-24">
+      <Clock tz="America/Los_Angeles" />
+    </div>
+    <div class="w-24 h-24">
+      <Clock tz="Europe/Berlin" />
+    </div>
+  </div>
+  <SpeechBubblesSmallScreen
+    relationshipId={$data?.id ?? ""}
+    userIdPersonOne={$data?.person_1}
+    userIdPersonTwo={$data?.person_2}
+  />
+  <div class="h-10" />
+</div>
+{/if}
+
+
+<div class="fixed w-full bottom-0 lg:top-0 left-0 flex justify-between lg:justify-end flex-row-reverse p-4 gap-2 z-50">
   <button
     class="btn btn-md btn-circle btn-ghost backdrop-blur-md shadow-md"
     on:click={() =>

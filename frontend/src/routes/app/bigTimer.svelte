@@ -30,7 +30,7 @@ $: minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 $: seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 </script>
 
-<h2 class="text-3xl mb-2">
+<h2 class="text-xl md:text-3xl text-center mb-2">
   Wir sehen uns das nächste Mal in
   {#if visits.length > 0}
     {nextVisit.location}
@@ -38,38 +38,35 @@ $: seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
   {/if}
 </h2>
 <h1 class="font-mono text-center mb-10">
-  <div class="grid grid-flow-col gap-2 text-center auto-cols-max">
+  <div class="flex gap-2 md:gap-6 flex-wrap justify-center">
     {#if days > 0}
       <div class="flex flex-col backdrop-blur-md shadow-md rounded-box p-4">
         {#if days <= 99}
-        <span class="countdown font-mono text-7xl">
+        <span class="countdown font-mono text-5xl md:text-7xl mx-auto">
           <span style="--value:{days};"></span>
         </span>
         {:else}
-        <span class="font-mono text-7xl inline-flex leading-[1em]">
+        <span class="font-mono text-5xl md:text-7xl mx-auto inline-flex leading-[1em]">
           {days}
         </span>
         {/if}
         Tage
       </div>
-      <div class="text-7xl"></div>
     {/if}
     <div class="flex flex-col backdrop-blur-md shadow-md rounded-box p-4">
-      <span class="countdown font-mono text-7xl">
+      <span class="countdown font-mono text-5xl md:text-7xl mx-auto">
         <span style="--value:{hours};"></span>
       </span>
       Stunden
     </div>
-    <div class="text-7xl"></div>
     <div class="flex flex-col backdrop-blur-md shadow-md rounded-box p-4">
-      <span class="countdown font-mono text-7xl">
+      <span class="countdown font-mono text-5xl md:text-7xl mx-auto">
         <span style="--value:{minutes};"></span>
       </span>
       Minuten
     </div>
-    <div class="text-7xl"></div>
     <div class="flex flex-col backdrop-blur-md shadow-md rounded-box p-4">
-      <span class="countdown font-mono text-7xl">
+      <span class="countdown font-mono text-5xl md:text-7xl mx-auto">
         <span style="--value:{seconds};"></span>
       </span>
       Sekunden

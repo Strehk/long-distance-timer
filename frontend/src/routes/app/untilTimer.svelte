@@ -17,7 +17,7 @@ $: hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 $: minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 </script>
 
-<h2 class="text-xl">
+<h2 class="text-md md:text-xl text-center">
   Insgesamt sind nur noch <span class="font-mono">{days}</span>
   Tage,
   <span class="font-mono">{hours}</span>
