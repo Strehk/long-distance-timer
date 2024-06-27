@@ -28,10 +28,10 @@ async function pollMessages(relId: string) {
       alert(e);
     });
 }
-$: pollMessages(relationshipId);
 
 onMount(() => {
-  const interval = setInterval(async () => pollMessages(relationshipId), 10000);
+  pollMessages(relationshipId);
+  const interval = setInterval(async () => pollMessages(relationshipId), 1000);
   return () => clearInterval(interval);
 });
 
@@ -47,8 +47,8 @@ $: newestMessagePersonTwo =
     .sort((a, b) => ISODateToUnix(b.created) - ISODateToUnix(a.created))[0]
     ?.message ?? "";
 </script>
-
-<div class="w-full flex justify-center items-center relative min-w-[1200px]">
+  
+<div class="w-full flex justify-center items-center lg:relative min-w-[1200px]">
   <slot />
   {#if newestMessagePersonOne}
     <div
