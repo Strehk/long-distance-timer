@@ -5,10 +5,8 @@ export let now: Date = new Date();
 export let start: Date;
 export let end: Date;
 
-$: progress = (
-  ((now.getTime() - start.getTime()) / (end.getTime() - start.getTime())) *
-  100
-)
+$: progress =
+  ((now.getTime() - start.getTime()) / (end.getTime() - start.getTime())) * 100;
 
 onMount(() => {
   const interval = setInterval(() => {

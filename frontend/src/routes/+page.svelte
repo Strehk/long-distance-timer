@@ -1,31 +1,31 @@
 <script>
-  import PocketBase from "pocketbase";
-  import { env } from "$env/dynamic/public";
-  import { PUBLIC_VERSION } from "$env/static/public";
+import PocketBase from "pocketbase";
+import { env } from "$env/dynamic/public";
+import { PUBLIC_VERSION } from "$env/static/public";
 
-  const pb = new PocketBase(env.PUBLIC_BACKEND_URL || "http://localhost:8090");
+const pb = new PocketBase(env.PUBLIC_BACKEND_URL || "http://localhost:8090");
 
-  let username = "";
-  let password = "";
-  let loginFailed = false;
+let username = "";
+let password = "";
+let loginFailed = false;
 
-  pb.authStore.onChange(() => {
-    if (pb.authStore.isValid) {
-      document.location.href = "/app";
-    }
-  });
-
-  async function handleLogin() {
-    const _authData = await pb
-      .collection("users")
-      .authWithPassword(username, password)
-      .catch((_e) => {
-        loginFailed = true;
-        setTimeout(() => {
-          loginFailed = false;
-        }, 3000);
-      });
+pb.authStore.onChange(() => {
+  if (pb.authStore.isValid) {
+    document.location.href = "/app";
   }
+});
+
+async function handleLogin() {
+  const _authData = await pb
+    .collection("users")
+    .authWithPassword(username, password)
+    .catch((_e) => {
+      loginFailed = true;
+      setTimeout(() => {
+        loginFailed = false;
+      }, 3000);
+    });
+}
 </script>
 
 <main class="w-full h-screen flex justify-center items-center bg-black">

@@ -12,7 +12,7 @@ import Clock from "./Clock.svelte";
 import UntilTimer from "./untilTimer.svelte";
 import { fade } from "svelte/transition";
 import SpeechBubblesSmallScreen from "./SpeechBubblesSmallScreen.svelte";
-import { width } from '$lib/stores.js';
+import { width } from "$lib/stores.js";
 
 const pb = new PocketBase(env.PUBLIC_BACKEND_URL || "http://localhost:8090");
 
@@ -23,6 +23,8 @@ let data: Writable<Relationship> = writable({} as Relationship);
 
 $: userId = writable("");
 
+let error = false;
+
 const relationshipPoll = async () => {
   const records = await pb
     .collection("relationship")
@@ -30,13 +32,21 @@ const relationshipPoll = async () => {
       expand: "visits",
     })
     .catch((e) => {
-      alert(e);
+      error = true;
+      console.error(e);
+      setTimeout(() => {
+        error = false;
+      }, 3000);
     });
 
   if (records?.length && records.length > 0) {
     data.set(records[0] as Relationship);
   } else {
     console.error("No relationship found");
+    error = true;
+    setTimeout(() => {
+      error = false;
+    }, 3000);
   }
 };
 
@@ -80,34 +90,52 @@ async function logout() {
   </div>
 {/if}
 
-
 <!-- Desktop -->
 {#if $width > BREAKPOINT}
-<div
-  class="w-screen h-screen flex justify-center items-start relative overflow-hidden"
->
-  <SpeechBubbles
-    relationshipId={$data?.id ?? ""}
-    userIdPersonOne={$data?.person_1}
-    userIdPersonTwo={$data?.person_2}
-  >
-  <div class="w-full h-full hidden lg:block relative">
-    <img
-      src="/map.jpeg"
-      alt="map"
-      class="w-full h-full contrast-75 saturate-75 brightness-125"
-    />
-    <img
-      src="/map.jpeg"
-      alt="map"
-      class="absolute w-full h-full contrast-75 saturate-75 brightness-125 bottom-0 translate-y-full rotate-180 -scale-x-100"
-    />
-  </div>
-  </SpeechBubbles>
   <div
-    id="banner1"
-    class="w-full h-full backdrop-blur-2xl bg-white bg-opacity-30 lg:h-[45%] lg:min-h-[300px] absolute bottom-0 right-0 flex flex-col justify-center items-center p-10"
+    class="w-screen h-screen flex justify-center items-start relative overflow-hidden"
   >
+    <SpeechBubbles
+      relationshipId={$data?.id ?? ""}
+      userIdPersonOne={$data?.person_1}
+      userIdPersonTwo={$data?.person_2}
+    >
+      <div class="w-full h-full hidden lg:block relative">
+        <img
+          src="/map.jpeg"
+          alt="map"
+          class="w-full h-full contrast-75 saturate-75 brightness-125"
+        />
+        <img
+          src="/map.jpeg"
+          alt="map"
+          class="absolute w-full h-full contrast-75 saturate-75 brightness-125 bottom-0 translate-y-full rotate-180 -scale-x-100"
+        />
+      </div>
+    </SpeechBubbles>
+    <div
+      id="banner1"
+      class="w-full h-full backdrop-blur-2xl bg-white bg-opacity-30 lg:h-[45%] lg:min-h-[300px] absolute bottom-0 right-0 flex flex-col justify-center items-center p-10"
+    >
+      <BigTimer
+        visits={$data?.expand?.visits ?? []}
+        end={$data?.end ? new Date($data.end) : new Date()}
+      />
+      <UntilTimer end={$data?.end ? new Date($data.end) : new Date()} />
+      <ProgressBar
+        end={$data?.end ? new Date($data.end) : new Date()}
+        start={$data?.start ? new Date($data.start) : new Date()}
+      />
+    </div>
+  </div>
+{/if}
+
+<!-- Mobile -->
+{#if $width <= BREAKPOINT}
+  <div
+    class="w-full min-h-screen p-10 flex flex-col justify-center items-center bg-slate-100"
+  >
+    <div class="h-10" />
     <BigTimer
       visits={$data?.expand?.visits ?? []}
       end={$data?.end ? new Date($data.end) : new Date()}
@@ -117,42 +145,26 @@ async function logout() {
       end={$data?.end ? new Date($data.end) : new Date()}
       start={$data?.start ? new Date($data.start) : new Date()}
     />
+    <div class="flex justify-between w-full my-10">
+      <div class="w-24 h-24">
+        <Clock tz="America/Los_Angeles" />
+      </div>
+      <div class="w-24 h-24">
+        <Clock tz="Europe/Berlin" />
+      </div>
+    </div>
+    <SpeechBubblesSmallScreen
+      relationshipId={$data?.id ?? ""}
+      userIdPersonOne={$data?.person_1}
+      userIdPersonTwo={$data?.person_2}
+    />
+    <div class="h-10" />
   </div>
-</div>
 {/if}
 
-<!-- Mobile -->
-{#if $width <= BREAKPOINT}
-<div class="w-full min-h-screen p-10 flex flex-col justify-center items-center bg-slate-100">
-  <div class="h-10" />
-  <BigTimer
-  visits={$data?.expand?.visits ?? []}
-  end={$data?.end ? new Date($data.end) : new Date()}
-  />
-  <UntilTimer end={$data?.end ? new Date($data.end) : new Date()} />
-  <ProgressBar
-  end={$data?.end ? new Date($data.end) : new Date()}
-  start={$data?.start ? new Date($data.start) : new Date()}
-  />
-  <div class="flex justify-between w-full my-10">
-    <div class="w-24 h-24">
-      <Clock tz="America/Los_Angeles" />
-    </div>
-    <div class="w-24 h-24">
-      <Clock tz="Europe/Berlin" />
-    </div>
-  </div>
-  <SpeechBubblesSmallScreen
-    relationshipId={$data?.id ?? ""}
-    userIdPersonOne={$data?.person_1}
-    userIdPersonTwo={$data?.person_2}
-  />
-  <div class="h-10" />
-</div>
-{/if}
-
-
-<div class="fixed w-full bottom-0 lg:top-0 left-0 flex justify-between lg:justify-end flex-row-reverse p-4 gap-2 z-50">
+<div
+  class="fixed w-full bottom-0 lg:top-0 left-0 flex justify-between lg:justify-end flex-row-reverse p-4 gap-2 z-50"
+>
   <button
     class="btn btn-md btn-circle btn-ghost backdrop-blur-md shadow-md"
     on:click={() =>
@@ -186,3 +198,11 @@ async function logout() {
 </div>
 
 <MessageModal userId={$userId} relationshipId={$data?.id ?? ""} />
+
+{#if error}
+  <div class="toast toast-top toast-end">
+    <div class="alert alert-error">
+      <span>Ein Fehler ist aufgetreten</span>
+    </div>
+  </div>
+{/if}
