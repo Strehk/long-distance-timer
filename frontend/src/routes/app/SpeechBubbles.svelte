@@ -25,7 +25,7 @@ async function pollMessages(relId: string) {
       $messages = data as Message[];
     })
     .catch((e) => {
-      alert(e);
+      console.error(e);
     });
 }
 
@@ -47,7 +47,7 @@ $: newestMessagePersonTwo =
     .sort((a, b) => ISODateToUnix(b.created) - ISODateToUnix(a.created))[0]
     ?.message ?? "";
 </script>
-  
+
 <div class="w-full flex justify-center items-center lg:relative min-w-[1200px]">
   <slot />
   {#if newestMessagePersonOne}

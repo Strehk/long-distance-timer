@@ -3,7 +3,7 @@ import { ISODateToUnix } from "$lib";
 import type { Visit } from "$lib/backendTypes";
 import { onMount } from "svelte";
 
-export const visits: Visit[] = [];
+export let visits: Visit[] = [];
 export let end: Date;
 
 $: nextVisit = visits.sort(
@@ -42,13 +42,15 @@ $: seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
     {#if days > 0}
       <div class="flex flex-col backdrop-blur-md shadow-md rounded-box p-4">
         {#if days <= 99}
-        <span class="countdown font-mono text-5xl md:text-7xl mx-auto">
-          <span style="--value:{days};"></span>
-        </span>
+          <span class="countdown font-mono text-5xl md:text-7xl mx-auto">
+            <span style="--value:{days};"></span>
+          </span>
         {:else}
-        <span class="font-mono text-5xl md:text-7xl mx-auto inline-flex leading-[1em]">
-          {days}
-        </span>
+          <span
+            class="font-mono text-5xl md:text-7xl mx-auto inline-flex leading-[1em]"
+          >
+            {days}
+          </span>
         {/if}
         Tage
       </div>

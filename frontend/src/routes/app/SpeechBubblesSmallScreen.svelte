@@ -24,7 +24,7 @@ async function pollMessages(relId: string) {
       $messages = data as Message[];
     })
     .catch((e) => {
-      alert(e);
+      console.error(e);
     });
 }
 
